@@ -11,10 +11,10 @@ export default function Logo(){
         </svg>
 
         <span className=" text-blue-500 font-medium text-lg">
-            Agenda  
+            Control  
         </span>
         <span className="text-lg">
-            Municipal
+            De Huertas
         </span>
         </Link>
     )

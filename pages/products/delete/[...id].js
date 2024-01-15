@@ -12,21 +12,21 @@ export default function DeleteProductPage(){
         if(!id){
             return;
         }
-        axios.get('/api/products?id='+id).then(response => {
+        axios.get('/api/huerta?id='+id).then(response => {
             setProductInfo(response.data);
         });
     },[id]);
     
     function goBack(){
-        router.push('/products');
+        router.push('/huerta');
     }
     async function deleteProduct(){
-        await axios.delete('/api/products?id='+id);
+        await axios.delete('/api/huerta?id='+id);
         goBack();
     }
     return(
         <Layout>
-                <h1 className="text-center">Estás seguro que quieres eliminar el producto 
+                <h1 className="text-center">Estás seguro que quieres eliminar esta Huerta ? 
                 &nbsp;{productInfo?.title}&apos;?
                 </h1>
                 <div class="flex gap-2 justify-center">

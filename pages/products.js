@@ -7,26 +7,26 @@ import axios from "axios";
 export default function Products(){
     const [products,setProducts] = useState([]);
     useEffect(()=>{
-        axios.get('/api/products').then(response =>{
+        axios.get('/api/huerta').then(response =>{
             setProducts(response.data);
         })
     },[]);
     return(
         <Layout>
             <Link className="btn-primary mb-2" href={'/products/new'}>
-             Crea una nueva Publicacion
+             Agrega Una Nueva Huerta
             </Link>
             <table className="basic mt-2 ">
                 <thead>
                     <tr>
-                      <td>Nombre de la Publicacion</td>
+                      <td>Huerta</td>
                       <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     {products.map(product => (
                         <tr key={product._id} >
-                            <td>{product.title}</td>
+                            <td>{product.ubicacion}</td>
                             <td>
                                 <Link className="btn-default" href={'/products/edit/'+product._id}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">

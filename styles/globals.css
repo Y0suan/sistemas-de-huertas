@@ -20,7 +20,7 @@ h1{
     @apply text-gray-800 mb-4 text-xl;
 }
 label{
-    @apply text-gray-600 text-sm ;
+    @apply text-gray-600 text-sm font-semibold ;
 }
 .btn-primary{
     @apply  inline-flex items-center rounded bg-blue-500 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600;
@@ -54,5 +54,12 @@ table.basic a{
 }
 .bg-blue{
     @apply bg-blue-500 
+}
+
+.flexCont{
+    @apply flex gap-4 flex-wrap w-[100%]
+}
+h3{
+    @apply font-semibold text-base text-gray-600 pt-4
 }
 

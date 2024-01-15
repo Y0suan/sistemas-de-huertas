@@ -12,13 +12,13 @@ export default function EditProductPage() {
     if (!id) {
       return;
     }
-    axios.get('/api/products?id='+id).then(response => {
+    axios.get('/api/huerta?id='+id).then(response => {
       setProductInfo(response.data);
     });
   }, [id]);
   return (
     <Layout>
-      <h1>Edit product</h1>
+      <h1>Edit HUerta</h1>
       {productInfo && (
         <ProductForm {...productInfo} />
       )}

@@ -1,8 +1,8 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import mongoose from 'mongoose';
-import Category from "@/models/Category";
 import { getServerSession } from "next-auth";
 import { isAdminRequest } from "./auth/[...nextauth]";
+import Referente from "@/models/Referente";
 
 export default async function handle(req,res){
     const {method} = req;
@@ -11,29 +11,21 @@ export default async function handle(req,res){
 
 
     if (method === 'GET'){
-        res.json(await Category.find().populate('parent'));
+        res.json(await Referente.find().populate('parent'));
     }
 
-    // if (method === 'POST'){
-    //     const {name,parentCategory} = req.body;
-    //     const categoryDoc = await Category.create({
-    //         name,
-    //         parent:parentCategory,
-    //     });
-    //     res.json(categoryDoc);
-    // }
 
     if (method === 'POST'){
-        const { name, parentCategory,properties} = req.body;
+        const { name, parentReferente,properties} = req.body;
     
         let parent = null;
-        if (parentCategory) {
-            parent = new mongoose.Types.ObjectId(parentCategory);
+        if (parentReferente) {
+            parent = new mongoose.Types.ObjectId(parentReferente);
         }
     
-        const categoryDoc = await Category.create({
+        const categoryDoc = await Referente.create({
             name,
-            parent: parentCategory || undefined ,
+            parent: parentReferente || undefined ,
             properties,
         });
         res.json(categoryDoc);
@@ -49,7 +41,7 @@ export default async function handle(req,res){
             parent = new mongoose.Types.ObjectId(parentCategory);
         }
 
-        const categoryDoc = await Category.updateOne({_id},{
+        const categoryDoc = await Referente.updateOne({_id},{
             name,
             parent: parentCategory || undefined ,
             properties,
@@ -60,7 +52,7 @@ export default async function handle(req,res){
 
     if (method === 'DELETE'){
         const {_id} = req.query;
-        await Category.deleteOne({_id});
+        await Referente.deleteOne({_id});
         res.json('ok');
     }
     

@@ -3,238 +3,284 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
-import Image from "next/image";
-
 
 export default function ProductForm({
   _id,
-  title: existingTitle,
-  description: existingDescription,
-  whatsapp: existingWhatsapp,
-  hubicacion: existingHubicacion,
+  referente: assignedReferente,
   fecha: existingFecha,
-  // facebook: existingFacebook,
-  // instagram: existingInstagram,
+  ubicacion: existingUbicacion,
+  ancho: existingAncho,
+  largo: existingLargo,
+  plantines: existingPlantines,
+  plantinesCantidad: existingPlantinesCantidad,
+  semillas: existingSemillas,
+  semillasCantidad: existingSemillasCantidad,
+  herramientas: existingHerramientas,
   images: existingImages,
-  category: assignedCategory,
 }) {
-  const [title, setTitle] = useState(existingTitle || '');
-  const [description, setDescription] = useState(existingDescription || '');
-  const [category, setCategory] = useState(assignedCategory || ''); // Asegúrate de que assignedCategory sea un ObjectId válido en lugar de una cadena vacía.
+  const [referente, setReferente] = useState(assignedReferente || "");
+  const [fecha, setFecha] = useState(existingFecha || "");
+  const [ubicacion, setUbicacion] = useState(existingUbicacion || "");
+  const [ancho, setAncho] = useState(existingAncho || "");
+  const [largo, setLargo] = useState(existingLargo || "");
+  const [plantines, setPlantines] = useState(existingPlantines || "");
+  const [plantinesCantidad, setPlantinesCantidad] = useState(
+    existingPlantinesCantidad || ""
+  );
+  const [semillas, setSemillas] = useState(existingSemillas || "");
+  const [semillasCantidad, setSemillasCantidad] = useState(
+    existingSemillasCantidad || ""
+  );
+  const [herramientas, setHerramientas] = useState(existingHerramientas || "");
+  const [images, setImages] = useState(existingImages || []);
 
+  const [goToProducts, setGoToProducts] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
-    const [productProperties,setProductProperties] = useState({});
-    const [whatsapp,setWhatsapp] = useState(existingWhatsapp || '');
-    const [fecha,setFecha] = useState(existingFecha || '');
+  useEffect(() => {
+    axios.get("/api/referentes").then((result) => {
+      setReferente(result.data);
+    });
+  }, []);
 
-    
-    const [hubicacion,setHubicacion] = useState(existingHubicacion || '');
-    // const [facebook,setFacebook] = useState(existingFacebook || '');
-    // const [instagram,setInstagram] = useState(existingInstagram || '');
-    
-    const [images,setImages] = useState(existingImages || []);
-    const [goToProducts,setGoToProducts] = useState(false);
-    const [isUploading,setIsUploading] = useState(false);
-    const [categories,setCategories] = useState([]);
-    const router = useRouter();
-    useEffect(()=>{
-        axios.get('/api/categories').then(result =>{
-            setCategories(result.data);
-        })
-    }, []);
-    async function saveProduct(ev){
-        ev.preventDefault();
-        const data = {
-            title,description,whatsapp,images,category,hubicacion,fecha,
-            properties:productProperties
-        };
-        if(_id){
-            //update
-            await axios.put('/api/products',{...data,_id});
-        }else{
-            //create
-            await axios.post('/api/products', data);
-        }
-        setGoToProducts(true);
+  useEffect(() => {
+    axios.get("/api/semillas").then((result) => {
+      setSemillas(result.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/plantines").then((result) => {
+      setPlantines(result.data);
+    });
+  }, []);
+
+  async function saveProduct(ev) {
+    ev.preventDefault();
+    const data = {
+      referente,
+      fecha,
+      ubicacion,
+      ancho,
+      largo,
+      plantines,
+      plantinesCantidad,
+      semillas,
+      semillasCantidad,
+      herramientas,
+      images,
+    };
+    if (_id) {
+      // actualizar
+      await axios.put("/api/huerta", { ...data, _id });
+    } else {
+      // crear
+      await axios.post("/api/huerta", data);
     }
-    if (goToProducts){
-        router.push('/products');
-    }
+    setGoToProducts(true);
+  }
 
-    async function uploadImages(ev) {
-      const files = ev.target?.files;
-      if (files?.length > 0) {
-        setIsUploading(true);
-        const formData = new FormData();
-    
-        for (const file of files) {
-          formData.append('file', file);
-        }
-    
-        try {
-          const response = await axios.post('/api/upload', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-    
-          const links = response.data.links;
-          setImages((oldImages) => [...oldImages, ...links]);
-        } catch (error) {
-          console.error('Error uploading images:', error);
-        }
-    
-        setIsUploading(false);
+  if (goToProducts) {
+    router.push("/huerta");
+  }
+
+  async function uploadImages(ev) {
+    const files = ev.target?.files;
+    if (files?.length > 0) {
+      setIsUploading(true);
+      const formData = new FormData();
+
+      for (const file of files) {
+        formData.append("file", file);
       }
-    }
-    
 
-    function updateIMagesOrder (images){
-        setImages(images);
-    }
-    function setProductProp(propName,value){
-        setProductProperties(prev => {
-            const newProductProps = {...prev};
-            newProductProps[propName] = value;
-            return newProductProps;
+      try {
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
-    }
 
-    const propertiesToFill = [];
-    if (categories.length > 0 && category) {
-      let catInfo = categories.find(({ _id }) => _id === category);
-      if (catInfo) {
-        propertiesToFill.push(...catInfo.properties);
-        while (catInfo?.parent?.id) {
-          const parentCat = categories.find(({ _id }) => _id === catInfo?.parent._id);
-          if (parentCat) {
-            propertiesToFill.push(...parentCat.properties);
-            catInfo = parentCat;
-          } else {
-            break;
-          }
-        }
+        const links = response.data.links;
+        setImages((oldImages) => [...oldImages, ...links]);
+      } catch (error) {
+        console.error("Error al subir las imágenes:", error);
       }
+
+      setIsUploading(false);
     }
-    
-    
-    return(
-            <form onSubmit={saveProduct}>
-            
-            <label>Nombre de la Publicacion</label>
-            <input 
-              type='text' 
-              placeholder="nombre de la Publicacion"
-              value={title}
-              onChange={ev => setTitle(ev.target.value)}
-            />
-            <label>Categoria</label>
-            <select 
-                value={category} 
-                onChange={ev => setCategory(ev.target.value)}
-            >
-                <option value=''>Elige una categoría</option> {/* Agrega esta opción con un valor vacío */}
-                {categories.length > 0 && categories.map(c => (
-                    <option value={c._id} key={c._id}>{c.name}</option>
-                ))}
-            </select>
-            {propertiesToFill && propertiesToFill.length > 0 && propertiesToFill.map(p => (
-            <div key={p._id} className="flex gap-1">
-            <div>{p.name}</div>
-            <select
-              value={productProperties[p.name]}
-              onChange={ev => setProductProp(p.name, ev.target.value)}
-            >
-              {p.values && p.values.map(v => (
-                <option key={v} value={v}>{v}</option>
-              ))}
-            </select>
-          </div>
-        ))}
+  }
 
+  function updateImagesOrder(images) {
+    setImages(images);
+  }
 
-            <label>
-                Fotos
-            </label>
-            <div className= "mb-2 flex flex-wrap gap-1">
-                <ReactSortable
-                list={images}
-                className="flex flex-wrap gap-1"
-                setList={updateIMagesOrder}
-                >
-                {!!images?.length && images.map(link => (
-                  <div key={link} className="h-24 bg-white shadow-sm rounded-sm border border-gray-200">
-                    <img src={link} alt="Descripción de la imagen" className="rounded-sm" />
-                  </div>
-                ))}
-
-                </ReactSortable>
-                {isUploading && (
-                    <div className="h-24 flex items-center">
-                        <Spinner/>
-                    </div>
-                )}
-                <label className= " w-24 h-24 cursor-pointer text-blue text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-sm bg-white shadow-md border border-gray-200 ">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
-                <div>
-                Subir
-                </div>
-                <input type="file" onChange={uploadImages} className="hidden"/>
-                </label>
-            </div>
-            <label>Descripcion</label>
-            <textarea 
-              placeholder="descripcion"
-              value={description}
-              onChange={ev => setDescription(ev.target.value)}
-            />
-
-            <label>Hubicacion</label>
-            <input 
-            type="text" 
-            placeholder="Hubicacion" 
-            value={hubicacion}
-            onChange={ev => setHubicacion(ev.target.value)}
-            />
-
-           <label>Fecha</label>
-            <input 
-            type="date" 
-            placeholder="Fecha" 
+  return (
+    <form onSubmit={saveProduct}>
+      <div className="flexCont">
+      <div>
+  <label>Elige un Referente</label>
+  <select
+    value={referente}
+    onChange={(ev) => setReferente(ev.target.value)}
+  >
+    <option value="">Elige un Referente</option>
+    {Array.isArray(referente) && referente.length > 0
+      ? referente.map((c) => (
+          <option value={c._id} key={c._id}>
+            {c.name}
+          </option>
+        ))
+      : null}
+  </select>
+</div>
+        <div>
+          <label>Fecha</label>
+          <input
+            type="date"
             value={fecha}
-            onChange={ev => setFecha(ev.target.value)}
+            onChange={(ev) => setFecha(ev.target.value)}
+          />
+        </div>
+      </div>
+
+      <label>Ubicacion</label>
+      <input
+        type="text"
+        value={ubicacion}
+        onChange={(ev) => setUbicacion(ev.target.value)}
+      />
+      <h3>Dimensiones:</h3>
+      <div className="flexCont">
+        <div>
+          <label>Ancho</label>
+          <input
+            type="number"
+            value={ancho}
+            onChange={(ev) => setAncho(ev.target.value)}
+          />
+        </div>
+        <div>
+          <label>Largo</label>
+          <input
+            type="number"
+            value={largo}
+            onChange={(ev) => setLargo(ev.target.value)}
+          />
+        </div>
+      </div>
+
+      <h3>Insumos entregados:</h3>
+      <div className="flexCont">
+        <div>
+          <label>Elige Plantines</label>
+          <select
+            value={plantines}
+            onChange={(ev) => setPlantines(ev.target.value)}
+          >
+            <option value="">Elige unos Plantines</option>
+            {Array.isArray(plantines) &&
+              plantines.length > 0 &&
+              plantines.map((p) => (
+                <option value={p._id} key={p._id}>
+                  {p.name}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div>
+          <label>Cantidad</label>
+          <input
+            type="number"
+            value={plantinesCantidad}
+            onChange={(ev) => setPlantinesCantidad(ev.target.value)}
+          />
+        </div>
+      </div>
+      <div className="flexCont">
+      <div>
+  <label>Elige Semillas</label>
+  <select
+    value={semillas}
+    onChange={(ev) => setSemillas(ev.target.value)}
+  >
+    <option value="">Elige unas Semillas</option>
+    {Array.isArray(semillas) && semillas.length > 0
+      ? semillas.map((s) => (
+          <option value={s._id} key={s._id}>
+            {s.name}
+          </option>
+        ))
+      : null}
+  </select>
+</div>
+        <div>
+          <label>Cantidad</label>
+          <input
+            type="number"
+            value={semillasCantidad}
+            onChange={(ev) => setSemillasCantidad(ev.target.value)}
+          />
+        </div>
+      </div>
+      <label>Herramientas</label>
+      <input
+        type="text"
+        value={herramientas}
+        onChange={(ev) => setHerramientas(ev.target.value)}
+      />
+
+      <label>Fotos</label>
+      <div className="mb-2 flex flex-wrap gap-1">
+        <ReactSortable
+          list={images}
+          className="flex flex-wrap gap-1"
+          setList={updateImagesOrder}
+        >
+          {!!images?.length &&
+            images.map((link) => (
+              <div
+                key={link}
+                className="h-24 bg-white shadow-sm rounded-sm border border-gray-200"
+              >
+                <img
+                  src={link}
+                  alt="Descripción de la imagen"
+                  className="rounded-sm"
+                />
+              </div>
+            ))}
+        </ReactSortable>
+
+        {isUploading && (
+          <div className="h-24 flex items-center">
+            <Spinner />
+          </div>
+        )}
+        <label className="w-24 h-24 cursor-pointer text-blue text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-sm bg-white shadow-md border border-gray-200 ">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
             />
+          </svg>
+          <div>Subir</div>
+          <input type="file" onChange={uploadImages} className="hidden" />
+        </label>
+      </div>
 
-
-            <label>Whatsapp</label>
-            <input 
-              type="number" 
-              placeholder="Whatsapp" 
-              value={whatsapp}
-              onChange={ev => setWhatsapp(ev.target.value)}
-              />
-{/* 
-              <label>Facebook</label>
-              <input 
-              type="text" 
-              placeholder="Facebook" 
-              value={facebook}
-              onChange={ev => setFacebook(ev.target.value)}
-              />
-          
-              <label>Instagram</label>
-              <input 
-              type="text" 
-              placeholder="Instagram" 
-              value={instagram}
-              onChange={ev => setInstagram(ev.target.value)}
-              /> */}
-
-            <button 
-              type="submit" 
-              className="btn-primary">Guardar</button>
-              </form>
-    )
+      <button type="submit" className="btn-primary">
+        Guardar
+      </button>
+    </form>
+  );
 }
