@@ -2,7 +2,6 @@ import { signOut } from "next-auth/react";
 import  Link  from "next/link";
 import { useRouter } from "next/router";
 import Logo from "./Logo";
-import { FaMapLocationDot } from "react-icons/fa6";
 import { FaUserFriends } from "react-icons/fa";
 import { RiPlantFill } from "react-icons/ri";
 import { FaSeedling } from "react-icons/fa";

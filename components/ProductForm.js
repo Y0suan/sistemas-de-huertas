@@ -82,7 +82,7 @@ export default function ProductForm({
   }
 
   if (goToProducts) {
-    router.push("/huerta");
+    router.push("/products");
   }
 
   async function uploadImages(ev) {
