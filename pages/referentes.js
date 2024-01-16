@@ -187,7 +187,7 @@ function Categories({ swal }) {
         <thead>
           <tr>
             <td>Nombres del Referente</td>
-            <td>Referente </td>
+            <td>DNI</td>
             <td></td>
           </tr>
         </thead>

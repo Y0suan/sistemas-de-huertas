@@ -187,7 +187,7 @@ function Categories({ swal }) {
         <thead>
           <tr>
             <td>Nombres del PLantin</td>
-            <td>Plantin </td>
+            <td>Cantidad</td>
             <td></td>
           </tr>
         </thead>

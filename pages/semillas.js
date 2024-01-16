@@ -188,7 +188,7 @@ function Semillas({ swal }) {
           <thead>
             <tr>
               <td>Nombre de la Semilla</td>
-              <td>Categoría</td>
+              <td>Cantidad</td>
               <td></td>
             </tr>
           </thead>
