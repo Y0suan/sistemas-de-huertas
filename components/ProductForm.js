@@ -36,7 +36,7 @@ export default function ProductForm({
   useEffect(() => {
     if (goToProducts) {
       // Redirige a la página "product" después de guardar el producto
-      router.push("/product");
+      router.push("/products");
     }
   }, [goToProducts, router]);
 
