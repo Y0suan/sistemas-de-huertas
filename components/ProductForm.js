@@ -7,82 +7,64 @@ import { ReactSortable } from "react-sortablejs";
 export default function ProductForm({
   _id,
   referente: assignedReferente,
+  dni: existingDni,
+  calle: existingCalle,
+  km: existingKm,
+  barrio: existingBarrio,
   fecha: existingFecha,
-  ubicacion: existingUbicacion,
-  ancho: existingAncho,
-  largo: existingLargo,
-  plantines: existingPlantines,
-  plantinesCantidad: existingPlantinesCantidad,
-  semillas: existingSemillas,
-  semillasCantidad: existingSemillasCantidad,
-  herramientas: existingHerramientas,
+  superficie: existingSuperficie,
+  entregado: existingEntregado,
   images: existingImages,
+  properties: existingProperties,
 }) {
   const [referente, setReferente] = useState(assignedReferente || "");
+  const [dni, setDni] = useState(existingDni || "");
+  const [calle, setCalle] = useState(existingCalle || "");
+  const [km, setKm] = useState(existingKm || "");
+  const [barrio, setBarrio] = useState(existingBarrio || "");
   const [fecha, setFecha] = useState(existingFecha || "");
-  const [ubicacion, setUbicacion] = useState(existingUbicacion || "");
-  const [ancho, setAncho] = useState(existingAncho || "");
-  const [largo, setLargo] = useState(existingLargo || "");
-  const [plantines, setPlantines] = useState(existingPlantines || "");
-  const [plantinesCantidad, setPlantinesCantidad] = useState(
-    existingPlantinesCantidad || ""
-  );
-  const [semillas, setSemillas] = useState(existingSemillas || "");
-  const [semillasCantidad, setSemillasCantidad] = useState(
-    existingSemillasCantidad || ""
-  );
-  const [herramientas, setHerramientas] = useState(existingHerramientas || "");
+  const [superficie, setSuperficie] = useState(existingSuperficie || "");
+  const [entregado, setEntregado] = useState(existingEntregado || "");
   const [images, setImages] = useState(existingImages || []);
+  const [properties, setProperties] = useState(existingProperties || []);
 
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    axios.get("/api/referentes").then((result) => {
-      setReferente(result.data);
-    });
-  }, []);
 
   useEffect(() => {
-    axios.get("/api/semillas").then((result) => {
-      setSemillas(result.data);
-    });
-  }, []);
+    if (goToProducts) {
+      // Redirige a la página "product" después de guardar el producto
+      router.push("/product");
+    }
+  }, [goToProducts, router]);
 
-  useEffect(() => {
-    axios.get("/api/plantines").then((result) => {
-      setPlantines(result.data);
-    });
-  }, []);
 
   async function saveProduct(ev) {
     ev.preventDefault();
     const data = {
       referente,
+      dni,
+      calle,
+      km,
+      barrio,
       fecha,
-      ubicacion,
-      ancho,
-      largo,
-      plantines,
-      plantinesCantidad,
-      semillas,
-      semillasCantidad,
-      herramientas,
+      superficie,
+      entregado,
       images,
+      properties,
     };
     if (_id) {
-      // actualizar
-      await axios.put("/api/huerta", { ...data, _id });
-    } else {
-      // crear
-      await axios.post("/api/huerta", data);
+      setGoToProducts(true);
     }
-    setGoToProducts(true);
-  }
-
-  if (goToProducts) {
-    router.push("/products");
+    try {
+      const response = await axios.post("/api/huerta", data);
+      console.log("Respuesta del servidor:", response.data);
+      // Aquí puedes manejar la respuesta del servidor según tus necesidades
+    } catch (error) {
+      console.error("Error al guardar el producto:", error);
+    }
   }
 
   async function uploadImages(ev) {
@@ -116,120 +98,118 @@ export default function ProductForm({
     setImages(images);
   }
 
+  function addProperty() {
+    setProperties((prev) => {
+      return [...prev, { name: '', values: '' }];
+    });
+  }
+
+  function handlePropertyNameChange(index, property, value) {
+    setProperties((prevProperties) => {
+      const updatedProperties = [...prevProperties];
+      updatedProperties[index] = { ...updatedProperties[index], name: value };
+      return updatedProperties;
+    });
+  }
+
+  function handlePropertyValueChange(index, property, value) {
+    setProperties((prevProperties) => {
+      const updatedProperties = [...prevProperties];
+      updatedProperties[index] = { ...updatedProperties[index], values: value };
+      return updatedProperties;
+    });
+  }
+
+  function removeProperty(index) {
+    setProperties((prevProperties) => {
+      const updatedProperties = [...prevProperties];
+      updatedProperties.splice(index, 1);
+      return updatedProperties;
+    });
+  }
+
   return (
     <form onSubmit={saveProduct}>
-      <div className="flexCont">
-      <div>
-  <label>Elige un Referente</label>
-  <select
-    value={referente}
-    onChange={(ev) => setReferente(ev.target.value)}
-  >
-    <option value="">Elige un Referente</option>
-    {Array.isArray(referente) && referente.length > 0
-      ? referente.map((c) => (
-          <option value={c._id} key={c._id}>
-            {c.name}
-          </option>
-        ))
-      : null}
-  </select>
-</div>
-        <div>
-          <label>Fecha</label>
-          <input
-            type="date"
-            value={fecha}
-            onChange={(ev) => setFecha(ev.target.value)}
-          />
-        </div>
-      </div>
 
-      <label>Ubicacion</label>
-      <input
-        type="text"
-        value={ubicacion}
-        onChange={(ev) => setUbicacion(ev.target.value)}
-      />
-      <h3>Dimensiones:</h3>
-      <div className="flexCont">
-        <div>
-          <label>Ancho</label>
-          <input
-            type="number"
-            value={ancho}
-            onChange={(ev) => setAncho(ev.target.value)}
-          />
-        </div>
-        <div>
-          <label>Largo</label>
-          <input
-            type="number"
-            value={largo}
-            onChange={(ev) => setLargo(ev.target.value)}
-          />
-        </div>
-      </div>
+<div className="flex flex-wrap gap-2 " >
 
-      <h3>Insumos entregados:</h3>
-      <div className="flexCont">
-        <div>
-          <label>Elige Plantines</label>
-          <select
-            value={plantines}
-            onChange={(ev) => setPlantines(ev.target.value)}
-          >
-            <option value="">Elige unos Plantines</option>
-            {Array.isArray(plantines) &&
-              plantines.length > 0 &&
-              plantines.map((p) => (
-                <option value={p._id} key={p._id}>
-                  {p.name}
-                </option>
-              ))}
-          </select>
-        </div>
-        <div>
-          <label>Cantidad</label>
-          <input
-            type="number"
-            value={plantinesCantidad}
-            onChange={(ev) => setPlantinesCantidad(ev.target.value)}
-          />
-        </div>
-      </div>
-      <div className="flexCont">
-      <div>
-  <label>Elige Semillas</label>
-  <select
-    value={semillas}
-    onChange={(ev) => setSemillas(ev.target.value)}
-  >
-    <option value="">Elige unas Semillas</option>
-    {Array.isArray(semillas) && semillas.length > 0
-      ? semillas.map((s) => (
-          <option value={s._id} key={s._id}>
-            {s.name}
-          </option>
-        ))
-      : null}
-  </select>
+<div className=" w-72 " >
+<label>Agrega Un Referente</label>
+<input
+  type="text"
+  value={referente}
+  onChange={(ev) => setReferente(ev.target.value)}
+/>
 </div>
-        <div>
-          <label>Cantidad</label>
-          <input
-            type="number"
-            value={semillasCantidad}
-            onChange={(ev) => setSemillasCantidad(ev.target.value)}
-          />
-        </div>
-      </div>
-      <label>Herramientas</label>
-      <input
-        type="text"
-        value={herramientas}
-        onChange={(ev) => setHerramientas(ev.target.value)}
-      />
+
+<div className=" w-72 " >
+<label>DNI</label>
+<input
+  type="text"
+  value={dni}
+  onChange={(ev) => setDni(ev.target.value)}
+/>
+</div>
+
+<div className=" w-72 " >
+<label>Calle</label>
+<input
+  type="text"
+  value={calle}
+  onChange={(ev) => setCalle(ev.target.value)}
+/>
+</div>
+<div className=" w-72 " >
+<label>Km</label>
+<input
+  type="text"
+  value={km}
+  onChange={(ev) => setKm(ev.target.value)}
+/>
+</div>
+<div className=" w-72 " >
+<label>Barrio</label>
+<input
+  type="text"
+  value={barrio}
+  onChange={(ev) => setBarrio(ev.target.value)}
+  />
+  </div>
+
+  
+  <div className=" w-72 " >
+
+    <label>Fecha</label>
+    <input
+      type="date"
+      value={fecha}
+      onChange={(ev) => setFecha(ev.target.value)}
+    />
+            </div>
+
+
+<div className=" w-72 " >
+
+<label>Superficie </label>
+<input
+  type="text"
+  value={superficie}
+  onChange={(ev) => setSuperficie(ev.target.value)}
+/>
+
+</div>
+<div className=" w-72 " >
+
+<label>Entregado</label>
+<input
+type="text"
+value={entregado}
+onChange={(ev) => setEntregado(ev.target.value)}
+/>
+
+</div>
+
+</div>
 
       <label>Fotos</label>
       <div className="mb-2 flex flex-wrap gap-1">
@@ -258,7 +238,7 @@ export default function ProductForm({
             <Spinner />
           </div>
         )}
-        <label className="w-24 h-24 cursor-pointer text-blue text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-sm bg-white shadow-md border border-gray-200 ">
+        <label className="w-24 h-24 cursor-pointer text-blue text-center flex items-center justify-center text-sm gap-1 text-gray-500 rounded-sm bg-white shadow-md border border-gray-200">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -278,9 +258,56 @@ export default function ProductForm({
         </label>
       </div>
 
+      <div className="mb-2">
+        <label className="block">Informacion adicional del Referente</label>
+        <button
+          onClick={addProperty}
+          type="button"
+          className="btn-default text-sm mb-2"
+        >
+          Agregar Mas Informacion
+        </button>
+        {properties.length > 0 &&
+          properties.map((property, index) => (
+            <div
+              className="flex gap-1 mb-2"
+              key={index} // Cambiado de property._id a index
+            >
+              <input
+                type="text"
+                className="mb-0"
+                value={property.name}
+                onChange={(ev) =>
+                  handlePropertyNameChange(index, property, ev.target.value)
+                }
+                placeholder="nombre de propiedad (ejemplo: DNI)"
+              />
+              <input
+                type="text"
+                className="mb-0"
+                onChange={(ev) =>
+                  handlePropertyValueChange(index, property, ev.target.value)
+                }
+                value={property.values}
+                placeholder="valores"
+              />
+
+              <button
+                onClick={() => removeProperty(index)}
+                type="button"
+                className="btn-default"
+              >
+                Eliminar
+              </button>
+            </div>
+          ))}
+      </div>
+
       <button type="submit" className="btn-primary">
         Guardar
       </button>
     </form>
   );
 }
+
+

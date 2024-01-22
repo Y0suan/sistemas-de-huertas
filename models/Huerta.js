@@ -1,16 +1,15 @@
 import mongoose, {model, Schema, models} from "mongoose";
 
 const HuertaSchena = new Schema({
-    referente:{type:mongoose.Types.ObjectId,ref:'Referente'},
-    fecha: String,
-    ubicacion: String,
-    ancho: Number,
-    largo: Number,
-    plantines: String,
-    plantinesCantidad: String,
-    semillas: String,
-    semillasCantidad: String,
-    herramientas: String,
+    referente:String,
+    dni:String,
+    calle:String,
+    km:String,
+    barrio:String,
+    fecha:String,
+    superficie:String,
+    entregado:String,
+    properties: [{type:Object}],
     images:[{type:String}],
 },{
     timestamps: true,

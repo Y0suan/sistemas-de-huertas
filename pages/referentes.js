@@ -129,6 +129,7 @@ function Categories({ swal }) {
           ))}
         </select>
         </div>
+
         <div className="mb-2">
           <label className="block">Informacion adicional  del Referente</label>
           <button onClick={addProperty}

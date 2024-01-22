@@ -18,7 +18,7 @@ export default function DeleteProductPage(){
     },[id]);
     
     function goBack(){
-        router.push('/huerta');
+        router.push('/products');
     }
     async function deleteProduct(){
         await axios.delete('/api/huerta?id='+id);

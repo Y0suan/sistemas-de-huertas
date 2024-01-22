@@ -36,10 +36,11 @@ export default function Nav({show}){
             <FaUser class={pathname === '/categories' ? activeIcon : inactiveIcon} />
             Admin
             </Link> 
-            <Link href={'/referentes'} class={pathname.includes('/referentes') ? activeLink : inactiveLink }>
-            <FaUserFriends class={pathname === '/referentes' ? activeIcon : inactiveIcon} />
+            <Link href={'/products'} class={pathname.includes('/products') ? activeLink : inactiveLink }>
+            <FaUserFriends class={pathname === '/products' ? activeIcon : inactiveIcon} />
             Referentes
             </Link>
+            {/* 
             <Link href={'/plantines'} class={pathname.includes('/plantines') ? activeLink : inactiveLink }>
             <RiPlantFill  class={pathname === '/plantines' ? activeIcon : inactiveIcon} />
             Plantines
@@ -47,9 +48,9 @@ export default function Nav({show}){
             <Link href={'/semillas'} class={pathname.includes('/semillas') ? activeLink : inactiveLink }>
             <GiPlantSeed lass={pathname === '/semillas' ? activeIcon : inactiveIcon} />
             Semillas
-            </Link>
-            <Link href={'/products'} class={pathname.includes('/products') ? activeLink : inactiveLink }>
-            <FaSeedling lass={pathname === '/products' ? activeIcon : inactiveIcon} />
+            </Link> */}
+            <Link href={'/huertas'} class={pathname.includes('/huertas') ? activeLink : inactiveLink }>
+            <FaSeedling lass={pathname === '/huertas' ? activeIcon : inactiveIcon} />
             Huertas
             </Link>
 

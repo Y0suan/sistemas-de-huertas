@@ -2,68 +2,98 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { isAdminRequest } from "./auth/[...nextauth]";
 import { Huerta } from "@/models/Huerta";
 
-
-export default async function handle(req, res){
-    const {method} = req;
+export default async function handle(req, res) {
+  try {
     await mongooseConnect();
-    await isAdminRequest(req,res);
+    await isAdminRequest(req, res);
 
+    const { method } = req;
 
-    if (method === 'GET'){
-        if (req.query?.id){
-            res.json(await Huerta.findOne({_id:req.query.id}));
-        }else{
-            res.json(await Huerta.find());
-        }
+    if (method === "GET") {
+      if (req.query?.id) {
+        const huerta = await Huerta.findOne({ _id: req.query.id });
+        res.json(huerta);
+      } else {
+        const huertas = await Huerta.find();
+        res.json(huertas);
+      }
     }
 
-    if (method === 'POST'){
-        const {referente,fecha,ubicacion,ancho,largo,plantines,plantinesCantidad,semillas,semillasCantidad,herramientas,images} = req.body;
-        const productDoc = await Huerta.create({
-            referente,fecha,ubicacion,ancho,largo,plantines,plantinesCantidad,semillas,semillasCantidad,herramientas,images
-        })
-        res.json(productDoc);
+    if (method === "POST") {
+      const {
+        referente,
+        dni,
+        calle,
+        km,
+        barrio,
+        fecha,
+        superficie,
+        entregado,
+        images,
+        properties,
+      } = req.body;
+      const huerta = await Huerta.create({
+        referente,
+        dni,
+        calle,
+        km,
+        barrio,
+        fecha,
+        superficie,
+        entregado,
+        images,
+        properties,
+      });
+      res.json(huerta);
     }
-    if (method === 'PUT') {
-        const {
+
+    if (method === "PUT") {
+      const {
+        referente,
+        dni,
+        calle,
+        km,
+        barrio,
+        fecha,
+        superficie,
+        entregado,
+        images,
+        properties,
+        _id,
+      } = req.body;
+
+      const updatedHuerta = await Huerta.findOneAndUpdate(
+        { _id },
+        {
+          $set: {
             referente,
+            dni,
+            calle,
+            km,
+            barrio,
             fecha,
-            ubicacion,
-            ancho,
-            largo,
-            plantines,
-            plantinesCantidad,
-            semillas,
-            semillasCantidad,
-            herramientas,
+            superficie,
+            entregado,
             images,
-            _id
-        } = req.body;
-    
-        await Huerta.updateOne({ _id }, {
-            $set: {
-                referente,
-                fecha,
-                ubicacion,
-                ancho,
-                largo,
-                plantines,
-                plantinesCantidad,
-                semillas,
-                semillasCantidad,
-                herramientas,
-                images
-            }
-        });
-    
-        res.json(true);
-    }
-    
+            properties,
+          },
+        },
+        { new: true } // Return the updated document
+      );
 
-    if (method === 'DELETE'){
-        if (req.query?.id){
-            await Huerta.deleteOne({_id:req.query?.id});
-            res.json(true);
-        }
+      res.json(updatedHuerta);
     }
+
+    if (method === "DELETE") {
+      if (req.query?.id) {
+        await Huerta.deleteOne({ _id: req.query.id });
+        res.json({ success: true });
+      } else {
+        res.status(400).json({ error: "Missing id parameter in the request" });
+      }
+    }
+  } catch (error) {
+    console.error("Error handling request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 }

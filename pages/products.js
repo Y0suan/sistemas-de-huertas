@@ -14,19 +14,19 @@ export default function Products(){
     return(
         <Layout>
             <Link className="btn-primary mb-2" href={'/products/new'}>
-             Agrega Una Nueva Huerta
+             Agrega Un Nuevo Referente
             </Link>
             <table className="basic mt-2 ">
                 <thead>
                     <tr>
-                      <td>Huerta</td>
+                      <td>Referente</td>
                       <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     {products.map(product => (
                         <tr key={product._id} >
-                            <td>{product.ubicacion}</td>
+                            <td>{product.referente}</td>
                             <td>
                                 <Link className="btn-default" href={'/products/edit/'+product._id}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
