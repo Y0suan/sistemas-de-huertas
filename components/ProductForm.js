@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
+import { useHistory } from 'react-router-dom';
 
 export default function ProductForm({
   _id,
@@ -14,6 +15,7 @@ export default function ProductForm({
   fecha: existingFecha,
   superficie: existingSuperficie,
   entregado: existingEntregado,
+  descripcion:existingDescripcion,
   images: existingImages,
   properties: existingProperties,
 }) {
@@ -25,6 +27,7 @@ export default function ProductForm({
   const [fecha, setFecha] = useState(existingFecha || "");
   const [superficie, setSuperficie] = useState(existingSuperficie || "");
   const [entregado, setEntregado] = useState(existingEntregado || "");
+  const [descripcion, setDescripcion] = useState(existingDescripcion || "");
   const [images, setImages] = useState(existingImages || []);
   const [properties, setProperties] = useState(existingProperties || []);
 
@@ -33,13 +36,8 @@ export default function ProductForm({
   const router = useRouter();
 
 
-  useEffect(() => {
-    if (goToProducts) {
-      // Redirige a la página "product" después de guardar el producto
-      router.push("/products");
-    }
-  }, [goToProducts, router]);
 
+ 
 
   async function saveProduct(ev) {
     ev.preventDefault();
@@ -52,20 +50,22 @@ export default function ProductForm({
       fecha,
       superficie,
       entregado,
+      descripcion,
       images,
       properties,
     };
-    if (_id) {
-      setGoToProducts(true);
-    }
+  
     try {
       const response = await axios.post("/api/huerta", data);
       console.log("Respuesta del servidor:", response.data);
-      // Aquí puedes manejar la respuesta del servidor según tus necesidades
+      
+      // Acceder al objeto router proporcionado por Next.js
+      router.push('/products');
     } catch (error) {
       console.error("Error al guardar el producto:", error);
     }
   }
+  
 
   async function uploadImages(ev) {
     const files = ev.target?.files;
@@ -205,6 +205,16 @@ export default function ProductForm({
 type="text"
 value={entregado}
 onChange={(ev) => setEntregado(ev.target.value)}
+/>
+
+</div>
+<div className=" w-72 " >
+
+<label>Descripcion</label>
+<textarea
+type="Textarea"
+value={descripcion}
+onChange={(ev) => setDescripcion(ev.target.value)}
 />
 
 </div>

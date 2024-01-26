@@ -16,9 +16,6 @@ export default function Huertas() {
   return (
     <Layout>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* {products.map((product) => (
-          <MIniCard key={product.referente} product={product} />
-        ))} */}
         Esto va a funcionar Mañana recien 
       </div>
     </Layout>

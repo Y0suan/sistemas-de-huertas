@@ -9,6 +9,7 @@ const HuertaSchena = new Schema({
     fecha:String,
     superficie:String,
     entregado:String,
+    descripcion:String,
     properties: [{type:Object}],
     images:[{type:String}],
 },{

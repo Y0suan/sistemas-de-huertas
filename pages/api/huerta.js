@@ -29,6 +29,7 @@ export default async function handle(req, res) {
         fecha,
         superficie,
         entregado,
+        descripcion,
         images,
         properties,
       } = req.body;
@@ -41,6 +42,7 @@ export default async function handle(req, res) {
         fecha,
         superficie,
         entregado,
+        descripcion,
         images,
         properties,
       });
@@ -57,6 +59,7 @@ export default async function handle(req, res) {
         fecha,
         superficie,
         entregado,
+        descripcion,
         images,
         properties,
         _id,
@@ -74,6 +77,7 @@ export default async function handle(req, res) {
             fecha,
             superficie,
             entregado,
+            descripcion,
             images,
             properties,
           },

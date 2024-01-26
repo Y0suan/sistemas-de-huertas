@@ -7,7 +7,7 @@ img{
 }
 input, textarea, select{
     @apply border border-gray-200 rounded px-1 w-full p-2 px-3  ; 
-    @apply mb-2 mt-1 bg-gray-100;
+    @apply mb-2 mt-1 bg-gray-100 max-w-xs;
 }
 select{
     @apply text-gray-600
@@ -66,3 +66,23 @@ h3{
 h4{
     @apply font-semibold text-base text-gray-600  
 }
+
+
+
+
+
+/* ---------------------------------------------- */
+.contMediumCard{
+    @apply shadow h-auto 
+  }
+  
+  .contMediumCard .imagen{
+    border-radius: 2px;
+    filter: brightness(80%) contrast(100%) grayscale(10%);
+    
+    @apply overflow-hidden h-auto  w-80 md:w-72 md:h-36
+  }
+  
+  .contMediumCard .text{
+    @apply p-4 flex flex-col gap-2  md:w-72 
+  }
